@@ -284,12 +284,25 @@ beast = 'fish'; // okay
 let y: any;
 y = 10;
 y = 'a'; // okay
+let anne: any = 'Anne';
+anne = 3; // okay
 
 // Any can be assigned to anything, and a variable of type any is treated 
 // by the tsc basically like it would be treated by javascript:
 let num: number;
 let whatever: any;
+whatever = 'hello';
 num = whatever; // okay
+
+// Variables that are declared without type and that do not receive a 
+// value upon declaration can take any types of values
+let Ann; // Ann is type any
+Ann = 'Ann';
+Ann = 3; // okay
+
+// But they cannot be assigned freely:
+let brad = 'Brad';
+// brad = Ann; // fails, unless we declared Ann: any
 
 // It can also be used in combination with array and other types.
 let arrayOfAny: any[];
@@ -311,12 +324,143 @@ let var2: any;
 // var1 = mystery; // fails, even though mystery has now a string value
 var2 = mystery; // okay
 
+// The purpose of unknown is to flag a variable as something of unknown
+// value, which should be checked before assignments:
+if(typeof mystery === 'string') // true
+  var1 = mystery; // works
+
+
+// Other special types, which are more used as return types of
+// functions, are void and never. Variables with these types can be
+// declared. The value undefined can be assigned to variables of type
+// void and undefined, but not to never.
+let voi: void;
+let und: undefined;
+let nev: never;
+voi = undefined;
+// voi = 3; // error
+und = undefined;
+// und = 3; // error
+// nev = undefined; // error
+
 
 
 // ------------------------------------------------------------------------
 // Function types
 // ------------------------------------------------------------------------
 
+// We can declare variable types as Function:
+let func: Function;
+// func = 3; // error
+func = ()=>{}; // okay
+
+// tsc also infers the return type of functions:
+function add(a: number, b: number)
+{ 
+  return a + b; // return type number is inferred
+}
+// let numb: string = add(2, 2); // error: return is not string
+
+// We can also explicitly declare the return type, and we get errors if
+// it doesn't match the type being returned.
+function subtract(a: number, b: number): number
+{ 
+  return a - b;
+}
+
+// Error:
+// function multiply(a: number, b: number): string // declares as string
+// { 
+//   return a * b; // but return is not string
+// }
+
+// We can also use arrow notation:
+// (two numbers as parameters, return type number)
+let f1 = (a: number, b: number): number => { return 0; };
+
+// If a return type is specified and the tsc cannot check whether the
+// function certainly returns the type, it throws an error.
+// This is okay:
+function noReturn(){
+  let x = 10;
+  if(x > 10) return 0;
+  if(x <= 10) return 1;
+}
+
+// But this fails:
+// function noReturnNumber(): number{
+//   let x = 10;
+//   if(x > 10) return 0;
+//   if(x <= 10) return 1;
+// }
+
+
+// There are lots of quirks in Typescript when it comes to function types.
+// The following assignment works (surprisingly):
 type Unary = (a: number) => number;
 let f: Unary;
 f = ()=>{ return 0; };
+
+// It would have failed if we defined the parameters as string, undefined,
+// void, or something else:
+// f = (a: string)=>{ return 0; };
+// f = (a: void)=>{ return 0; };
+// f = (a: undefined)=>{ return 0; };
+
+// But it works with any:
+f = (a: any)=>{ return 0; };
+
+// However, if we try to call f without arguments, it fails:
+// f(); // fails
+f(0); // okay
+
+// Any of the following fails:
+// let f2: (a: number) => number;
+// f = (a: number) => { return 'a'; };
+
+// let f2: (a: number) => number;
+// f = (a: number) => { };
+
+
+// Now, back to special types... The type void (and any) can be used for 
+// functions that do not return defined values. All below work:
+function voidFunc(): void{ }
+function voidFunc2(): void{ return; }
+function voidFunc3(): void{ return undefined; }
+function anyfunc(): any{ }
+function anyfunc2(): any{ return; }
+function anyfunc3(): any{ return undefined; }
+
+// Return type undefined can only be used in functions that explicitly return.
+// function undefunc(): undefined{ } // fails!
+function undefunc2(): undefined{ return; } // okay
+function undefunc3(): undefined{ return undefined; } // okay
+
+// Even though the return of a function without a return statement is
+// undefined, these functions cannot be assigned to undefined variables:
+let undvar: undefined;
+// undvar = voidFunc(); // fails
+// undvar = ()=>{}; // fails
+undvar = undefunc2(); // okay
+
+// Last, there is the never type, which can be used for functions that do
+// not reach their end:
+function thrower(): never{ throw 'error'; }
+function loop(): never{ while(true){ } }
+
+// It cannot be used in the place of void:
+// function neverFunc(): never{ } // fails
+// function neverFunc2(): never{ return; } // fails
+// function neverFunc3(): never{ return undefined; } // fails
+
+// But types void and undefined can be used for these types of functions:
+function thrower2(): void{ throw 'error'; }
+function loop2(): void{ while(true){ } }
+function thrower3(): undefined{ throw 'error'; }
+function loop3(): undefined{ while(true){ } }
+
+
+
+// TO DO:
+// * decorators
+// * generics
