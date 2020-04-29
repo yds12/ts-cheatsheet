@@ -12,9 +12,9 @@ then `cd` into it and, with **Node.js** and **npm** installed, run:
 This command will install the packages `typescript` (the Typescript compiler)
 and `ts-node` (a REPL for Typescript).
 
-Now you can try to compile the `.ts` file with:
+Now you can try to compile the `.ts` files with:
 
-    npx tsc index.ts
+    npx tsc
 
-It will generate a `index.js` file in the same directory. All the interesting
-stuff is, however, written as code and comments in the `index.ts` file.
+It will generate a `index.js` file in the `dist` directory. All the interesting
+stuff is, however, written as code and comments in the `src/index.ts` file.

@@ -166,6 +166,56 @@ let fakeTuple = ['Mario', 21];
 
 
 // ------------------------------------------------------------------------
+// Enum types
+// ------------------------------------------------------------------------
+
+// Enums are a nice way to organize sets of constants that are used
+// almost as a type. E.g., instead of:
+const STATUS_ALIVE = 0;
+const STATUS_DEAD = 1;
+let process1 = { id: 1, status: STATUS_ALIVE };
+
+// We can define an enum for status:
+enum Status { ALIVE, DEAD };
+let process2 = { id: 2, status: Status.ALIVE };
+
+// Actually, they even have the same values:
+if(process1.status === process2.status && Status.DEAD === STATUS_DEAD)
+  console.log('Statuses coincide!'); // will print
+
+// The values of the enum will, behind the scenes, be assigned 0, 1, 2,...
+// This can be changed though:
+enum DifferentValues { FIRST = 1, SECOND = 3, THIRD = 2, FOURTH = 'a' };
+console.log(DifferentValues.FOURTH); // prints 'a'
+
+// Behind the scenes, enums are not replaced by number literals, but by
+// functions. This is the code generated for the snippet above 
+// (with compiler target set to ES5):
+/*
+  var Status;
+  (function (Status) {
+      Status[Status["ALIVE"] = 0] = "ALIVE";
+      Status[Status["DEAD"] = 1] = "DEAD";
+  })(Status || (Status = {}));
+  ;
+  var process2 = { id: 2, status: Status.ALIVE };
+*/
+
+// The behaviour seems a bit inconsistent when assigning values directly to 
+// an enum variable. Look:
+let myEnum: DifferentValues;
+myEnum = 1; // okay
+console.log(myEnum); // prints 1
+myEnum = 10; // okay!(?)
+console.log(myEnum); // prints 10
+myEnum = DifferentValues.FOURTH;
+console.log(myEnum); // prints 'a'
+// myEnum = 'a'; // error!
+// myEnum = 'b'; // error
+
+
+
+// ------------------------------------------------------------------------
 // Special types
 // ------------------------------------------------------------------------
 
