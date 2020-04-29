@@ -136,6 +136,36 @@ receivedStringArray(someArray); // works: type any disables type-checking
 
 
 // ------------------------------------------------------------------------
+// Tuple type
+// ------------------------------------------------------------------------
+
+// Similar to type tuple in python. An array of fixed size:
+let tuple: [string, number];
+tuple = ['Mario', 22]; // okay
+// tuple = [22, 'Mario']; // error: not in order
+tuple[1] = 21; // okay
+// tuple[1] = 'Mario'; // fails: second element is number
+// tuple[2] = 0; // fails: no third element
+
+// error: trying to assing [string, number, number] 
+// tuple = ['Mario', 22, 0]; 
+
+// However, tsc has a weird behaviour:
+tuple.push('bros'); // works!(?)
+
+function acceptsTuple(tup: [string, number]){};
+acceptsTuple(tuple); // works, even though tuple = ['Mario', 21, 'bros']
+// acceptsTuple(['Mario', 21, 'bros']); // fails!!
+acceptsTuple(['Mario', 21]); // works, as expected 
+
+// Another relevant observation is that assigning an array with various types
+// in it will have type inferred to a union type array, not tuple:
+let fakeTuple = ['Mario', 21];
+// acceptsTuple(fakeTuple); // fails: fakeTuple is (string|number)[]
+
+
+
+// ------------------------------------------------------------------------
 // Special types
 // ------------------------------------------------------------------------
 
