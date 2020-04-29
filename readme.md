@@ -9,6 +9,9 @@ then `cd` into it and, with **Node.js** and **npm** installed, run:
 
     npm install
 
+This command will install the packages `typescript` (the Typescript compiler)
+and `ts-node` (a REPL for Typescript).
+
 Now you can try to compile the `.ts` file with:
 
     npx tsc index.ts
