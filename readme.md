@@ -16,5 +16,5 @@ Now you can try to compile the `.ts` files with:
 
     npx tsc
 
-It will generate a `index.js` file in the `dist` directory. All the interesting
+It will generate an `index.js` file in the `dist` directory. All the interesting
 stuff is, however, written as code and comments in the `src/index.ts` file.

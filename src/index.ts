@@ -45,6 +45,31 @@ let stringOrInt: string | number;
 stringOrInt = 10; // okay
 stringOrInt = 'a'; // also okay
 
+// There are some limitations to tsc's type inference.
+// Both strings and numbers can be combined with the + operator (even a string
+// and a number)
+let someStr = 'a';
+let someNumber = 3;
+console.log(someStr + someNumber);
+
+// However, the following code will not compile:
+// operator '+' cannot be applied to (string | number) and (string | number)
+// function sum(a: string | number, b: string | number){
+//   return a + b;
+// }
+
+// Even with the type-check below:
+// function sum(a: string | number, b: string | number){
+//   if(typeof a === typeof b)
+//     return a + b;
+// }
+
+// It works with the following, though:
+function sum(a: string | number, b: string | number){
+  if(typeof a === 'number' && typeof b === 'string')
+    return a + b;
+}
+
 
 // Array types can be defined with the following syntax:
 let arr: [];
@@ -166,7 +191,7 @@ let fakeTuple = ['Mario', 21];
 
 
 // ------------------------------------------------------------------------
-// Enum types
+// Enum types, Aliases and Literal Types
 // ------------------------------------------------------------------------
 
 // Enums are a nice way to organize sets of constants that are used
@@ -214,6 +239,41 @@ console.log(myEnum); // prints 'a'
 // myEnum = 'b'; // error
 
 
+// Besides enums, you can declare your own types or aliases:
+type OrType = (number | boolean);
+type ComplexType = (string | 
+                    (number | boolean) | 
+                    [string, number] | 
+                    OrType[] |
+                    { name: string, weight: number });
+
+type StringOrNumber = (string | number);
+let sn: StringOrNumber;
+sn = 9; // okay
+sn = 'aaa'; // okay
+// sn = [1, 2]; // error
+
+
+// Constants are assigned literal types.
+const constant = 3.14159; // type is not 'number' but 3.14159
+
+// But we can also declare variables with those types:
+let pi: 3.14159; // pi has no value yet, it's just declared with a type
+// pi = 3.14; // error: pi's type is not 3.14, but 3.14159
+pi = 3.14159; // okay
+
+// This can be used similarly to enums:
+let animal: 'dog'|'cat';
+animal = 'dog'; // okay
+animal = 'cat'; // okay
+// animal = 'fish'; // error
+
+// We can use it in combination with an alias:
+type Animal = 'dog' | 'cat' | 'fish';
+let beast: Animal;
+beast = 'fish'; // okay
+
+
 
 // ------------------------------------------------------------------------
 // Special types
@@ -230,6 +290,14 @@ y = 'a'; // okay
 let num: number;
 let whatever: any;
 num = whatever; // okay
+
+// It can also be used in combination with array and other types.
+let arrayOfAny: any[];
+arrayOfAny = []; // okay
+arrayOfAny = [1, 2, 3]; // okay
+arrayOfAny = ['a', 1]; // okay
+// arrayOfAny = 'Carlos'; // not okay
+
 
 // A similar type but with almost opposite treatment by tsc is the type
 // unknown. It can also receive any value:
